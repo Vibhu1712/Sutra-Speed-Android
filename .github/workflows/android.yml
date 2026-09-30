@@ -47,9 +47,14 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          # Without this the action only configures caching and expects a Gradle wrapper in
+          # the repo, so the `gradle` command below is not on PATH. Pinning the version also
+          # keeps Gradle compatible with AGP 8.5.2 and Kotlin 1.9.24.
+          gradle-version: '8.7'
 
       - name: Build the debug APK
-        run: gradle assembleDebug --no-daemon
+        run: gradle assembleDebug --no-daemon --stacktrace
 
       - name: Upload the debug APK
         uses: actions/upload-artifact@v4
@@ -78,7 +83,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: gradle bundleRelease assembleRelease --no-daemon
+        run: gradle bundleRelease assembleRelease --no-daemon --stacktrace
 
       - name: Upload the release build
         if: github.event_name == 'release' && env.HAVE_KEYSTORE == 'true'
