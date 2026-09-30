@@ -1,4 +1,4 @@
-package in.sutraspeed.app
+package `in`.sutraspeed.app
 
 import android.annotation.SuppressLint
 import android.os.Bundle
