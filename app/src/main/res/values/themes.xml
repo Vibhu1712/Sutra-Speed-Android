@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SutraSpeed" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:statusBarColor">#9C4215</item>
+        <item name="android:navigationBarColor">#FFFDF8</item>
+        <item name="android:windowBackground">@color/bg</item>
+    </style>
+</resources>
