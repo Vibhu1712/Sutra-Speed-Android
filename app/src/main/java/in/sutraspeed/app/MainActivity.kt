@@ -4,10 +4,14 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.webkit.JavascriptInterface
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.webkit.WebViewAssetLoader
 import java.io.File
 
 /**
@@ -41,7 +45,18 @@ class MainActivity : AppCompatActivity() {
         web.isVerticalScrollBarEnabled = false
         web.overScrollMode = View.OVER_SCROLL_NEVER
         web.addJavascriptInterface(Bridge(), "Android")
-        web.loadUrl("file:///android_asset/index.html")
+        // Serve assets over https://appassets.androidplatform.net/assets/ so that fetch()
+        // can read lessons.json and questions.json. fetch() does not work on file:// URLs.
+        val assetLoader = WebViewAssetLoader.Builder()
+            .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
+            .build()
+        web.webViewClient = object : WebViewClient() {
+            override fun shouldInterceptRequest(
+                view: WebView,
+                request: WebResourceRequest
+            ): WebResourceResponse? = assetLoader.shouldInterceptRequest(request.url)
+        }
+        web.loadUrl("https://appassets.androidplatform.net/assets/index.html")
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
